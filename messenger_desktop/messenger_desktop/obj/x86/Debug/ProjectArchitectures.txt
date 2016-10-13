@@ -1,0 +1,1 @@
+c:\users\malik pc\documents\visual studio 2015\Projects\messenger_desktop\messenger_desktop\messenger_desktop.csproj;x86
