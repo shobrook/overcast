@@ -4,7 +4,7 @@ var axolotl = require("axolotl");
 var store = {
 	identityKeyPair: {
 		public: new ArrayBuffer(),
-		private: new ArrayBuffer()
+		private: new ArrayBuffer(),
 	},
 	registrationId: 0,
 	getLocalIdentityKeyPair: function() {
@@ -18,12 +18,10 @@ var store = {
 	},
 	getLocalPreKeyPair: function(preKeyId) {
 		return identityKeyPair;
-	}
-};
+	},
+}
 
-var axol = axolotl(store);
-
-console.log(axol);
+var axol = axolotl(store);	
 
 axol.generateIdentityKeyPair().then(function(KeyPair) { // Generate our identity key
 	console.log(KeyPair);
@@ -44,4 +42,4 @@ axol.generateLastResortPreKey().then(function(preKeyId) { // Generate our last r
 axol.generateSignedPreKey(identityKeyPair, 1).then(function(preKeyId) { // Generate our first signed pre-key to send to the server
 	console.log(preKeyId);
 	// Push preKeyId to server
-}); 
+});
