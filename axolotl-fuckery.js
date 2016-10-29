@@ -18,11 +18,11 @@ var store = {
 	},
 	getLocalPreKeyPair: function(preKeyId) {
 		return identityKeyPair;
-	},
+	},		
 }
 
 var axol = axolotl(store);	
-
+			
 axol.generateIdentityKeyPair().then(function(KeyPair) { // Generate our identity key
 	console.log(KeyPair);
 	// Push KeyPair to local storage module
