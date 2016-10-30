@@ -1,0 +1,83 @@
+@font-face {
+  font-family: 'ApercuPro';
+  src: url('apercu_regular_pro.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'ApercuProMedium';
+  src: url('apercu_medium_pro.woff') format('woff');
+}
+
+#logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 58px;
+    height: 58px;
+    background-color: rgb(253, 254, 255);
+}
+
+#content {
+    position: absolute;
+    top: 31.06%;
+    left: 13.67%;
+    width: 400px;
+    height: 200px;
+}
+
+html {
+    background-color: rgb(0, 33, 64);
+}
+
+#box {
+    position: absolute;
+    width: 17px;
+    height: 34px;
+    top: 12px;
+    left: 12px;
+    background-color: rgb(0, 33, 64);
+}
+
+#subtitle {
+    font-family:'ApercuProMedium', sans-serif;
+    font-size: 13.68pt;
+    line-height: 18pt;
+    letter-spacing: 1px;
+    color: rgb(255, 255, 255);
+    position: absolute;
+    left: 0;
+    top: 62px;
+    width: auto;
+}
+
+a {
+    font-family: 'ApercuPro', sans-serif;
+    color: rgb(219, 84, 97);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+a:hover {
+    cursor: pointer;
+    border-color: rgb(219, 84, 97);
+}
+span {
+  cursor: default;
+}
+
+#regular {
+  font-family: 'ApercuPro', sans-serif;
+}
+
+.noSelect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;  
+}
