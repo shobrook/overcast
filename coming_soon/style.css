@@ -55,6 +55,7 @@ a {
     color: rgb(219, 84, 97);
     text-decoration: none;
     border-bottom: 2px solid transparent;
+    padding-bottom: 2px;
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
