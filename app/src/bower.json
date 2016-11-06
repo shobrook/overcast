@@ -1,0 +1,25 @@
+{
+  "name": "overcast",
+  "description": "end to end encryption for facebook messenger",
+  "main": "app.js",
+  "authors": [
+    "moonfruits and mbladra"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "encryption",
+    "foward-secrecy",
+    "axolotl",
+    "messenger",
+    "secure-communication"
+  ],
+  "homepage": "https://github.com/moonfruits/overcast",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
