@@ -1,2 +1,2 @@
 # overcast
-end to end encryption for facebook messenger. secure communication made easy for a trump presidency. http://getovercast.io/
+end to end encryption for facebook messenger. convenient and secure communication for a trump presidency. http://getovercast.io/
