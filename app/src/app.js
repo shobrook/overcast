@@ -1,19 +1,26 @@
-var electron = require('electron');
-var app = electron.app;
-var BrowserWindow = electron.BrowserWindow;
+const {app, BrowserWindow, ipcMain} = require('electron');
+let mainWindow;
 
-var main = null; // Instantiate first splash screen of app
+app.on('window-all-closed', function() {
+	app.quit();
+});
 
-app.on('ready', function() { // Fires a binding 'ready' event
-    main = new BrowserWindow({ // See http://electron.atom.io/docs/api/browser-window/ for various window settings
-        width: 833,
-        height: 512,
-        titleBarStyle: 'hidden'
-    });
+app.on('ready', function() {
+	mainWindow = new BrowserWindow({
+		width: 833,
+		height: 512,
+		titleBarStyle: 'hidden' // Hides the traffic lights
+	});
+	mainWindow.loadURL('file://' + __dirname + '/windows/splash/splash.html');
 
-    main.loadURL('file://' + __dirname + '/windows/splash/splash.html');
+	// TO-DO: Replace the timeout function with a DOM event that, while X
+	// condition, loads the splash screen
+	setTimeout(function() {
+		mainWindow.loadURL('file://' + __dirname + '/windows/main/main.html');
+	}, 2000);
+});
 
-    setTimeout(function(){
-        main.loadURL('file://' + __dirname + '/windows/main/main.html');
-    }, 2000);
+// Communicating with the renderer process for logging
+ipcMain.on('async', (event, arg) => {
+	console.log(arg);
 });
