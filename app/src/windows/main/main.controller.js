@@ -27,7 +27,7 @@ onload = function() {
 					ipcRenderer.send('async', 'Database connection established to: ' + url);
 
 					var collection = db.collection('registers'); // Assign a path for the collection
-					var record = {id: 0} // Initialized an empty user document
+					var record = {"id":0} // Initialized an empty user document
 
 					// TO-DO: Scrape the user's static thread ID and modify the document above
 
