@@ -26,28 +26,13 @@ onload = function() {
 				} else {
 					ipcRenderer.send('async', 'Database connection established to: ' + url);
 
-					var collection = db.collection('registers'); // Assign a path for the collection
-					var record = {"id":0} // Initialized an empty user document
-
-					// TO-DO: Scrape the user's static thread ID and modify the document above
-
-					// Inserts the user registration document (with only the thread ID inside)
-					collection.insert(record, function(err, result) {
-						if (err) {
-							ipcRenderer.send('async', 'Unable to insert user record. Error: ' + err);
-						} else {
-							ipcRenderer.send('async', 'Initialized the following user record: ' + JSON.stringify(result)); 
-						}
-						db.close();
-					});
-
 					// Generate the user's keypair and pushes to local dirs + server
 					function register (callback) {
-						var identityKeyPair = null
-						var registrationId = null
-						var signedPreKeyPairs = []
-						var preKeyPairs = []
-						var sessions = {}
+						var identityKeyPair = null;
+						var registrationId = null;
+						var signedPreKeyPairs = [];
+						var preKeyPairs = [];
+						var sessions = {};
 
 						// Implementation of the store interface
 						var store = {
@@ -55,7 +40,7 @@ onload = function() {
 							getLocalRegistrationId: function() { console.log('Store.gLRI'); return registrationId },
 							getLocalSignedPreKeyPair: function (id) { console.log('Store.gLSPKP ' + id); return signedPreKeyPairs[id] },
 							getLocalPreKeyPair: function (id) { console.log('Store.gLPKP ' + id); return preKeyPairs[id] },
-						}
+						};
 
 						var axol = axolotl(store); // Insantiate an axol instance with underlying store
 
@@ -87,9 +72,9 @@ onload = function() {
 						}).then(function (result) {
 							signedPreKeyPairs[result.id] = result;
 							ipcRenderer.send('async', 'SignedKeyPair #' + result.id + ': ' + keyPairToString(result.keyPair) + '\n\tsignature: ' + new Buffer(result.signature).toString('hex'));
-							callback(axol, store);
 							// TO-DO: Concatenate first signed prekey to existing user record
 								// console.log() > SignedKeyPair #1: (pub XYZ, priv XYZ) signature: XYZ
+							callback(axol, store);
 						});
 					}
 
@@ -98,25 +83,49 @@ onload = function() {
 						return ('(public ' + new Buffer(keyPair.public).toString('hex') + ', private ' + new Buffer(keyPair.private).toString('hex') + ')');
 					}
 
-					// Call and verify
-					register(function (result) {
-						ipcRenderer.send('async', 'User has successfully been registered.');
+					// Register the user and push their data to the server
+					register(function (axol, store) {
+						ipcRenderer.send('async', 'User has successfully generated prekey bundle.');
+						var preKeyBundle = {
+							id: 0, // User's static thread ID, scraped from messenger
+							registrationId: store.getLocalRegistrationId(),
+							identityKey: new Buffer(store.getLocalIdentityKeyPair().public).toString('hex'),
+							preKeyId: 0, // null
+							preKey: new Buffer(store.getLocalPreKeyPair(0).keyPair.public).toString('hex'), // null
+							signedPreKey: new Buffer(store.getLocalSignedPreKeyPair(1).keyPair.public).toString('hex'),
+							signedPreKeySignature: new Buffer(store.getLocalSignedPreKeyPair(1).signature).toString('hex')
+						};
+
+						var collection = db.collection('keybundles');
+						collection.insert(preKeyBundle, function(err, result) {
+							if (err) {
+								ipcRenderer.send('async', "Unable to push user's keybundle to database. Error: " + err);
+							} else {
+								ipcRenderer.send('async', 'Initialized the following keybundle: ' + JSON.stringify(result));
+							};
+							db.close();
+						});
 					});
+
+					/*
+					var collection = db.collection('registers'); // Assign a path for the collection
+					var record = {id: 0}; // Initialized an empty user document
+
+					// TO-DO: Scrape the user's static thread ID and modify the document above
+
+					// Inserts the user registration document (with only the thread ID inside)
+					collection.insert(record, function(err, result) {
+						if (err) {
+							ipcRenderer.send('async', 'Unable to insert user record. Error: ' + err);
+						} else {
+							ipcRenderer.send('async', 'Initialized the following user record: ' + JSON.stringify(result)); 
+						}
+						db.close();
+					});
+					*/
+
 				}
 			});
 		}
 	});
 }
-
-/* PSEUDOCODE
- 
- * 'did-get-redirect-request' DOM event listener for a successful sign-in
- * Sign-in event handler needs to do the following:
-     * Scrape the user's unique thread ID from facebook
-     * Generate the user's identity keypair
-         * Hash and save this data in a local directory
-     * Generate the user's first set of prekeys, last resort prekey, and first signed prekey
-         * Push this data and the user ID to the server
- * Onload runs only when overcast IDs don't match
-
-*/
