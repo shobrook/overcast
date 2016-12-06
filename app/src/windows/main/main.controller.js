@@ -26,7 +26,7 @@ onload = function() {
 				} else {
 					ipcRenderer.send('async', 'Database connection established to: ' + url);
 
-					// Generate the user's keypair and pushes to local dirs + server
+					// Generate the user's public and private keypair––returns a usable axol instance and underlying store
 					function register (callback) {
 						var identityKeyPair = null;
 						var registrationId = null;
@@ -71,17 +71,18 @@ onload = function() {
 								// console.log() > LastResortPreKey #167777215: (pub XYZ, priv XYZ)
 						}).then(function (result) {
 							signedPreKeyPairs[result.id] = result;
-							ipcRenderer.send('async', 'SignedKeyPair #' + result.id + ': ' + keyPairToString(result.keyPair) + '\n\tsignature: ' + new Buffer(result.signature).toString('hex'));
+							ipcRenderer.send('async', 'SignedKeyPair #' + result.id + ': ' + keyPairToString(result.keyPair) + '\n\tsignature: ' 
+								+ new Buffer(result.signature).toString('hex'));
 							// TO-DO: Concatenate first signed prekey to existing user record
 								// console.log() > SignedKeyPair #1: (pub XYZ, priv XYZ) signature: XYZ
 							callback(axol, store);
 						});
-					}
+					};
 
 					// Casts a keypair to a string for console logging
 					function keyPairToString (keyPair) {
 						return ('(public ' + new Buffer(keyPair.public).toString('hex') + ', private ' + new Buffer(keyPair.private).toString('hex') + ')');
-					}
+					};
 
 					// Register the user and push their data to the server
 					register(function (axol, store) {
@@ -123,9 +124,8 @@ onload = function() {
 						db.close();
 					});
 					*/
-
-				}
+				};
 			});
-		}
+		};
 	});
-}
+};
