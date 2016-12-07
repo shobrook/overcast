@@ -7,8 +7,8 @@ app.on('window-all-closed', function() {
 
 app.on('ready', function() {
 	mainWindow = new BrowserWindow({
-		width: 833,
-		height: 512,
+		width: 945,
+		height: 581,
 		titleBarStyle: 'hidden' // Hides the traffic lights
 	});
 	mainWindow.loadURL('file://' + __dirname + '/windows/splash/splash.html');
