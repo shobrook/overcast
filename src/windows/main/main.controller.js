@@ -88,7 +88,6 @@ onload = function() {
 					register(function (axol, store) {
 						ipcRenderer.send('async', 'User has successfully generated prekey bundle.');
 						var preKeyBundle = {
-							id: 0, // User's static thread ID, scraped from messenger
 							registrationId: store.getLocalRegistrationId(),
 							identityKey: new Buffer(store.getLocalIdentityKeyPair().public).toString('hex'),
 							preKeyId: 0, // null
@@ -97,6 +96,7 @@ onload = function() {
 							signedPreKeySignature: new Buffer(store.getLocalSignedPreKeyPair(1).signature).toString('hex')
 						};
 
+						// Push the preKeyBundle 
 						var collection = db.collection('keybundles');
 						collection.insert(preKeyBundle, function(err, result) {
 							if (err) {
@@ -129,3 +129,9 @@ onload = function() {
 		};
 	});
 };
+
+/*
+ * Hash the array buffers in the preKeyBundle
+ * Generate an overcast ID upon first download
+ * Scrape the facebook user ID
+*/
