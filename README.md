@@ -8,12 +8,12 @@ A desktop app for easy and out of sight secure communication. Sign-in with faceb
 ## Download overcast
 The project is still a 👶 and needs a little more nutrition.
 
-## Contribute
+## Move with us
 Clone the repository:
 ```$ git clone https://github.com/moonfruits/overcast.git```
 
 Install the dependencies:
-* [AXOLOTL](https://github.com/joebandenburg/libaxolotl-javascript)
+* [Axolotl](https://github.com/joebandenburg/libaxolotl-javascript)
 * Electron binaries
 * Mongodb 
 
