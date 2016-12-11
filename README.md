@@ -1,6 +1,6 @@
 Overcast
 ======
-![Screenshot](screenshot-placeholder.png)
+![Screenshot](screenshot-placeholder-2.png)
 
 **End to end encryption for facebook messenger.**
 A desktop app for easy and out of sight secure communication. Sign-in with facebook and... Built on electron and axolotl––a ratcheting forward secrecy [protocol](https://github.com/trevp/double_ratchet/wiki) inspired by Open Whisper Systems.
