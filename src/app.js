@@ -15,6 +15,7 @@ app.on('ready', function() {
 
 	// TO-DO: Replace the timeout function with a DOM event that, while X
 	// condition, loads the splash screen
+
 	setTimeout(function() {
 		mainWindow.loadURL('file://' + __dirname + '/windows/main/main.html');
 	}, 2000);
