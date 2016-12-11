@@ -34,7 +34,7 @@
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
     
-    // login with facebook with extra permissions
+    // login with facebook with no permissions
     function login() {
       FB.login(function(response) {
         if (response.status === 'connected') {
