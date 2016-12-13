@@ -1,16 +1,21 @@
 Overcast
 ======
-![Screenshot](assets/screenshot-placeholder-3.png)
+![Screenshot](assets/screenshot-placeholder.png)
 
-**A beautiful and powerful
-End to end encryption for facebook messenger.**
-A desktop app for easy and out of sight secure communication. Sign-in with facebook and... Built on electron and axolotl––a ratcheting forward secrecy [protocol](https://github.com/trevp/double_ratchet/wiki) inspired by Open Whisper Systems.
+**We're making secure communication easier.**
+Overcast is an open source desktop app that combines the security of end-to-end encryption with Facebook messenger's ease of use. Simply login with Facebook and voila: convenient, secure, and reliable messaging.* Built on electron and axolotl––an implementation of Open Whisper System's [forward secrecy protocol](https://whispersystems.org/docs/specifications/doubleratchet/doubleratchet.pdf).
+
+*Stolen from Whatsapp lol
 
 ## Download Overcast
-The project is still a 👶 and needs a little more nutrition.
+The project is still a 👶 and requires a little more care before going live. Be on the lookout for some first words.
 
 ## Your Data Matters
-Protect it. 'This message is for you and nobody else. Not facebook. Not the NSA. Nobody.'
+* Everybody has secrets. Protect them.
+* While Facebook supports optional end-to-end encryption for the messenger app, they still hold your private keys. Take back your private keys.
+* With overcast, you are in control. Facebook can't read your messages, only you and who you're talking to.
+* A smarter way to use Facebook messenger. 
+* Encrypted by default, overcast is the easiest way to avoid surveillance.
 
 ## Move With Us
 Clone the repository:
@@ -19,13 +24,13 @@ Clone the repository:
 Install the dependencies:
 * [Axolotl](https://github.com/joebandenburg/libaxolotl-javascript)
 * Electron binaries
-* Mongodb 
+* Mongodb (testing locally, for now)
 
 To package and build overcast:
 ```npm install package.js```
 (Once we actually have a package.js)
 
 ## The Road Ahead
-Dual-functionality as a keychain, etc. etc.
-Feature requests.
-Make secure communication mainstream.
+* Dual-functionality as a keychain, first PGP keychain to have FB authentication, etc.
+* Feature requests (contact [me](http://m.me/shobrookj/))
+* Let's make secure communication mainstream
