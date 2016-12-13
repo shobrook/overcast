@@ -49,32 +49,26 @@ onload = function() {
 							identityKeyPair = result;
 							ipcRenderer.send('async', 'IdentityKeyPair: ' + keyPairToString(result));
 							return axol.generateRegistrationId();
-							// TO-DO: Hash private keypair and store in local directory
+							// TO-DO: Encrypt private keypair and store in local directory
 						}).then(function (result) {
 							registrationId = result;
 							ipcRenderer.send('async', 'RegistrationId: ' + result);
 							return axol.generatePreKeys(0, NUM_PREKEYS);
-							// TO-DO: Hash registration ID and store in local directory
+							// TO-DO: Encrypt registration ID and store in local directory
 						}).then(function (result) {
 							preKeyPairs = result;
 							ipcRenderer.send('async', 'PreKeys:\n\t' + result.map(function (pair) {
 								return 'PreKey #' + pair.id + ': ' + keyPairToString(pair.keyPair);
 							}).join('\n\t'));
 							return axol.generateLastResortPreKey();
-							// TO-DO: Cast prekeys to an object with 'id: prekey' pairs, concatenate to existing user record
-								// console.log() > PreKeys: PreKey #0: (pub XYZ, priv XYZ), PreKey #1: (public XYZ, priv XYZ), ...
 						}).then(function (result) {
 							preKeyPairs[result.id] = result;
 							ipcRenderer.send('async', 'LastResortPreKey #' + result.id + ': ' + keyPairToString(result.keyPair));
 							return axol.generateSignedPreKey(identityKeyPair, 1);
-							// TO-DO: Concatenate last resort prekey to existing user record
-								// console.log() > LastResortPreKey #167777215: (pub XYZ, priv XYZ)
 						}).then(function (result) {
 							signedPreKeyPairs[result.id] = result;
 							ipcRenderer.send('async', 'SignedKeyPair #' + result.id + ': ' + keyPairToString(result.keyPair) + '\n\tsignature: ' 
 								+ new Buffer(result.signature).toString('hex'));
-							// TO-DO: Concatenate first signed prekey to existing user record
-								// console.log() > SignedKeyPair #1: (pub XYZ, priv XYZ) signature: XYZ
 							callback(axol, store);
 						});
 					};
@@ -107,31 +101,16 @@ onload = function() {
 							db.close();
 						});
 					});
-
-					/*
-					var collection = db.collection('registers'); // Assign a path for the collection
-					var record = {id: 0}; // Initialized an empty user document
-
-					// TO-DO: Scrape the user's static thread ID and modify the document above
-
-					// Inserts the user registration document (with only the thread ID inside)
-					collection.insert(record, function(err, result) {
-						if (err) {
-							ipcRenderer.send('async', 'Unable to insert user record. Error: ' + err);
-						} else {
-							ipcRenderer.send('async', 'Initialized the following user record: ' + JSON.stringify(result)); 
-						}
-						db.close();
-					});
-					*/
 				};
 			});
 		};
 	});
 };
 
-/*
- * Hash the array buffers in the preKeyBundle
- * Generate an overcast ID upon first download
- * Scrape the facebook user ID
+/* TO-DO:
+ * Encrypt the array buffers when pushing to the server
+ * Figure out persisting storage for the private keys
+ * Call login() onclick for the 'continue' button
+ 	* Push the ID to the server w/ associated keypair
+ 	* Build in a check to stop the function from running on each login
 */
