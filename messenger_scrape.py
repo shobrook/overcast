@@ -13,7 +13,7 @@ def get_text_url(id):
 
 def get_text():
 	id = '100004087752800'
-    #mess = {}
+#mess = {}
     txt = ''
     url = get_text_url(id)
     soup = get_soup(url)
