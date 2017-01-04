@@ -154,7 +154,7 @@ def get_message_history(session, fb_dtsg, my_id, friend_id, username, thread=Fal
 					chat_name = ''
 				out.append(chat_name)
 			
-			out[1] = str(out[1])
+			out[1] = str(out[1]).lstrip('b')
 			output.write('\t'.join(out) + '\n')
 
 
