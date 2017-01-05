@@ -15,7 +15,7 @@ import time
 import selenium
 import requests 
 from splinter import Browser
-from urllib2 import URLError
+from urllib.error import URLError
 
 _base_url = "https://www.facebook.com"
 _login_url = "https://login.facebook.com/login.php?login_attempt=1"
@@ -26,7 +26,7 @@ try:
 	password = sys.argv[2]
 	out = sys.argv[3]
 except IndexError:
-	print "Usage: python get_friends.py <username> <password> <output file>"
+	print("Usage: python get_friends.py <username> <password> <output file>")
 	sys.exit()
 
 # Create the phantom js browser instance 
@@ -44,7 +44,7 @@ def login():
 
 	enter = browser.find_by_id("u_0_n").first
 	enter.click()
-	print "Logged in!"
+	print("Logged in!")
 
 	browser.visit(_base_msg_url)
 
@@ -56,7 +56,7 @@ def load_more():
 		# The 'load more' area is really an a href tag, which can be 'clicked' on
 		link = div.find_by_css("div")[0].find_by_css("a")[0]
 		if link.value == 'Load Older Threads':
-			print 'Loading more...'
+			print('Loading more...')
 			link.click()
 			return True
 
@@ -71,7 +71,7 @@ def get_threads():
 		name = user.find_by_css("span.accessible_elem").text.lower() 	# Your friend's name
 		username = user.find_by_css("a._k_")['href'].split("/")[-1]		# Your friend's username (what appears in their url)
 
-		f.write(str(fid) + '\t' + name.encode("utf8") + '\t' + username.encode("utf8") + '\n')
+		f.write(str(fid) + '\t' + str(name.encode("utf8")) + '\t' + str(username.encode("utf8")) + '\n')
 
 	f.close()
 
@@ -86,7 +86,7 @@ while True:
 			break
 		time.sleep(1)
 	except (URLError, selenium.common.exceptions.StaleElementReferenceException):
-		print "reconnecting......"
+		print("reconnecting......")
 		# Try to reconnect 
 		time.sleep(5)
 		try:
