@@ -158,7 +158,7 @@ def get_message_history(session, fb_dtsg, my_id, friend_id, username, thread=Fal
 			output.write('\t'.join(out) + '\n')
 
 
-		if len(message_list) < json_limit:
+		if len(message_list) <= json_limit:
 			print('\t', num_messages, 'with', username)
 			break
 		else:
