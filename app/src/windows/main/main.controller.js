@@ -49,12 +49,10 @@ onload = function() {
 							identityKeyPair = result;
 							ipcRenderer.send('async', 'IdentityKeyPair: ' + keyPairToString(result));
 							return axol.generateRegistrationId();
-							// TO-DO: Encrypt private keypair and store in local directory
 						}).then(function (result) {
 							registrationId = result;
 							ipcRenderer.send('async', 'RegistrationId: ' + result);
 							return axol.generatePreKeys(0, NUM_PREKEYS);
-							// TO-DO: Encrypt registration ID and store in local directory
 						}).then(function (result) {
 							preKeyPairs = result;
 							ipcRenderer.send('async', 'PreKeys:\n\t' + result.map(function (pair) {

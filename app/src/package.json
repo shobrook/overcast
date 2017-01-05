@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/moonfruits/overcast"
+    "url": "https://github.com/shobrook/overcast"
   },
   "keywords": [
     "encryption",
@@ -19,10 +19,14 @@
     "secure",
     "communication"
   ],
-  "author": "moonfruits and mbladra",
+  "author": "Jonathan and Malik",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/moonfruits/overcast/issues"
+    "url": "https://github.com/shobrook/overcast/issues"
   },
+<<<<<<< HEAD
   "homepage": "https://getovercast.io/"
+=======
+  "homepage": "http://getovercast.io/"
+>>>>>>> master
 }
