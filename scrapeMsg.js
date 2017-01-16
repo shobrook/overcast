@@ -1,3 +1,5 @@
+//get text elements in main body
+
 /*init  var containerNode = document.getElementsByClassName('__i_')[0];
 
 containerNode.childNodes.forEach(function(child) { //console.log(child);
@@ -20,6 +22,7 @@ for(i = 0; i < containerNode.length; i++) {
 	containerNode[i].innerHTML = 'bussy';
 }
 
+//get text elements on the side
 //init var sideMaster = document.getElementsByClassName('_1htf'); 
 
 for(i = 0; i < sideMaster.length; i++) {
