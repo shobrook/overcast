@@ -1,4 +1,4 @@
-//init  var containerNode = document.getElementsByClassName('__i_')[0];
+/*init  var containerNode = document.getElementsByClassName('__i_')[0];
 
 containerNode.childNodes.forEach(function(child) { //console.log(child);
     if (child.tagName == 'DIV' && child.id.length > 0) {
@@ -14,7 +14,11 @@ containerNode.childNodes.forEach(function(child) { //console.log(child);
       	});
     }
 });
-
+*/
+var containerNode = document.getElementsByClassName('_3oh-\ _58nk');
+for(i = 0; i < containerNode.length; i++) {
+	containerNode[i].innerHTML = 'bussy';
+}
 
 //init var sideMaster = document.getElementsByClassName('_1htf'); 
 
