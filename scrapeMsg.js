@@ -18,5 +18,7 @@ containerNode.childNodes.forEach(function(child) { //console.log(child);
 
 //init var sideMaster = document.getElementsByClassName('_1htf'); 
 
-var sideMaster = document.getElementsByClassName('_1htf');
+for(i = 0; i < sideMaster.length; i++) {
+	sideMaster[i].innerHTML = 'sex';
+}
 
