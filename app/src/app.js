@@ -10,6 +10,7 @@ function createWindow(url, nodeInt) {
 		titleBarStyle: 'hidden',
 		webPreferences: {
 			//preload: path.join(__dirname, 'preload.js'),
+			//webSecurity: false,
 			nodeIntegration: nodeInt,
 			plugins: true
 		}
@@ -21,21 +22,24 @@ function createWindow(url, nodeInt) {
 };
 
 app.on('ready', function() {
-	mainWindow = createWindow('file://' + __dirname + '/windows/splash/splash.html', true);
-	//('file://' + __dirname + '/windows/main/main.html');
+	mainWindow = createWindow('file://' + __dirname + '/windows/splash/splash.html', false);
+	//mainWindow = createWindow('file://' + __dirname + '/windows/main/main.html'); //('file://' + __dirname + '/windows/main/main.html');
 
 	mainWindow.show();
+	//mainWindow.loadURL('http://facebook.com/');
 	setTimeout(function() { // Detect 'did-finish-load' event for mainWindow
-		mainWindow.loadURL('http://localhost:8000/windows/main/get-user-info.html');
-		mainWindow.webContents.openDevTools();
-		
+		signInWindow = createWindow('http://localhost:8000/windows/main/get-user-info.html', true)
+		signInWindow.show();
+		signInWindow.webContents.openDevTools();
 		// Check for successful sign-in, then run mainWindow.show()
-	}, 3000);
+	}, 1000);
 
+	//signInWindow.webContents.openDevTools();
 });
 
 app.on('closed', function() {
 	app.quit();
+	signInWindow = null;
 });
 
 // Communicating with the renderer process for logging
