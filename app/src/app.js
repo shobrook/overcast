@@ -1,24 +1,41 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
-let mainWindow;
+const path = require('path');
+const url = require('url');
 
-app.on('window-all-closed', function() {
-	app.quit();
-});
+function createWindow(url, nodeInt) {
+	const win = new BrowserWindow({
+		title: 'Encrypted Messenger',
+		width: 945,
+		height: 600,
+		titleBarStyle: 'hidden',
+		webPreferences: {
+			//preload: path.join(__dirname, 'preload.js'),
+			nodeIntegration: nodeInt,
+			plugins: true
+		}
+	});
+
+	win.loadURL(url);
+
+	return win;
+};
 
 app.on('ready', function() {
-	mainWindow = new BrowserWindow({
-		width: 945,
-		height: 581,
-		titleBarStyle: 'hidden' // Hides the traffic lights
-	});
-	mainWindow.loadURL('file://' + __dirname + '/windows/splash/splash.html');
+	mainWindow = createWindow('file://' + __dirname + '/windows/splash/splash.html', true);
+	//('file://' + __dirname + '/windows/main/main.html');
 
-	// TO-DO: Replace the timeout function with a DOM event that, while X
-	// condition, loads the splash screen
+	mainWindow.show();
+	setTimeout(function() { // Detect 'did-finish-load' event for mainWindow
+		mainWindow.loadURL('http://localhost:8000/windows/main/get-user-info.html');
+		mainWindow.webContents.openDevTools();
+		
+		// Check for successful sign-in, then run mainWindow.show()
+	}, 3000);
 
-	setTimeout(function() {
-		mainWindow.loadURL('file://' + __dirname + '/windows/main/main.html');
-	}, 2000);
+});
+
+app.on('closed', function() {
+	app.quit();
 });
 
 // Communicating with the renderer process for logging

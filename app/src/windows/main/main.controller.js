@@ -16,7 +16,7 @@ onload = function() {
 
 	// Listens for a successful sign-in attempt
 	webview.addEventListener('did-get-redirect-request', function loginHandler(event) {
-		if ((event.oldURL == 'https://www.messenger.com/login/password/') && (event.newURL == 'https://www.messenger.com/')) {
+		if ((event.oldURL == 'https://www.facebook.com/login/password/') && (event.newURL == 'https://www.facebook.com/')) {
 			ipcRenderer.send('async', 'User has successfully logged in.');
 
 			// Connect to the database
