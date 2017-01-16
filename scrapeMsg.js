@@ -14,3 +14,9 @@ containerNode.childNodes.forEach(function(child) { //console.log(child);
       	});
     }
 });
+
+
+//init var sideMaster = document.getElementsByClassName('_1htf'); 
+
+var sideMaster = document.getElementsByClassName('_1htf');
+
