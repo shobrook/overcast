@@ -17,6 +17,7 @@ containerNode.childNodes.forEach(function(child) { //console.log(child);
     }
 });
 */
+//below doesnt support emojees
 var containerNode = document.getElementsByClassName('_3oh-\ _58nk');
 for(i = 0; i < containerNode.length; i++) {
 	containerNode[i].innerHTML = 'bussy';
