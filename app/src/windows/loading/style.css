@@ -1,11 +1,11 @@
 @-webkit-keyframes loading {
     from {width: 0px;}
-    to {width: 226px;}
+    to {width: 139px;}
 }
 
 @keyframes loading {
     from {width: 0px;}
-    to {width: 226px;}
+    to {width: 139px;}
 }
 
 /*
@@ -23,7 +23,6 @@
     100% {width: 226px; opacity: 0;}
 }
 */
-
 #logo {
     position: absolute;
     left: 0;
@@ -40,20 +39,20 @@ html {
 
 #blue {
     position: absolute;
-    height: 106px;
-    width: 228px;
+    height: 64px;
+    width: 141px;
     top: 50%;
-    margin-top: -53px;
+    margin-top: -32px;
     left: 50%;
-    margin-left: -114px;
+    margin-left: -70.5px;
     background-color: rgb(0,132,255);
 }
 
 #moving {
     position: absolute;
-    top: 2px;
+    top: 1px;
     left: 0;
-    height: 102px;
+    height: 62px;
     width: 0px;
     background-color: rgb(19,17,18);
     -webkit-animation: loading 5s 1;
