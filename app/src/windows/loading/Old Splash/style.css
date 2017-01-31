@@ -1,0 +1,20 @@
+html {
+	background-color: rgb(0, 33, 64);
+}
+
+img {
+	width: 35%;
+	height: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	user-drag: none; 
+	user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
