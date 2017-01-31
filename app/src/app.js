@@ -7,8 +7,8 @@ let loginStatus = false;
 function createWindow(url, nodeInt) {
 	const win = new BrowserWindow({
 		title: 'Encrypted Messenger',
-		width: 945,
-		height: 600,
+		width: 975,
+		height: 650,
 		titleBarStyle: 'hidden',
 		webPreferences: {
 			//preload: path.join(__dirname, 'preload.js'),
@@ -23,6 +23,12 @@ function createWindow(url, nodeInt) {
 	return win;
 }
 
+app.on('ready', function() {
+	loading = createWindow('file://' + __dirname + '/windows/loading/index.html');
+	loading.show();
+});
+
+/*
 app.on('ready', function() {
 	signInWindow = createWindow('https://www.facebook.com/login', false);
 	signInWindow.show();
@@ -47,6 +53,7 @@ app.on('ready', function() {
 		}
 	});
 });
+*/
 
 app.on('closed', function() {
 	app.quit();
