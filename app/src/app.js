@@ -24,8 +24,14 @@ function createWindow(url, nodeInt) {
 }
 
 app.on('ready', function() {
-	loading = createWindow('file://' + __dirname + '/windows/loading/index.html');
-	loading.show();
+	loginWindow = createWindow('file://' + __dirname + '/windows/login/login.html');
+	loginWindow.show();
+
+	
+
+
+	//loading = createWindow('file://' + __dirname + '/windows/loading/loading.html');
+	//loading.show();
 });
 
 /*
@@ -65,3 +71,15 @@ ipcMain.on('async', (event, arg) => {
 	console.log(arg);
 });
 */
+
+// Initialize headless browser onload of the login page.
+// Scrape user's inputted FB credentials on form submit.
+// Post credentials to facebook.com in headless browser; on successful login, initialize FBID scraper,
+// else return 'Incorrect email or password.' error screen
+// Run Malik's JS in headless browser to scrape user's FBID, then send the FBID to the main process using ipcRenderer.
+// Upon receipt of FBID, initialize the loading screen.
+// Generate the user's keybundle in the renderer and pass all data to both local directories and the main process.
+// Push the FBID and public prekeys to MongoDB.
+// After server receipt confirmation, load the messenger.com/login wrapper (but do not show).
+// Preload the JS injection that posts FB credentials to login form and decrypts all messages on-screen.
+// Then show the messenger screen after confirmation from the JS injection.
