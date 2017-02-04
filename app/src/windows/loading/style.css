@@ -1,11 +1,11 @@
 @-webkit-keyframes loading {
     from {width: 0px;}
-    to {width: 139px;}
+    to {width: 139px;} /*156px*/
 }
 
 @keyframes loading {
     from {width: 0px;}
-    to {width: 139px;}
+    to {width: 139px;} /*156px*/
 }
 
 /*
@@ -23,6 +23,7 @@
     100% {width: 226px; opacity: 0;}
 }
 */
+
 #logo {
     position: absolute;
     left: 0;
@@ -39,20 +40,20 @@ html {
 
 #blue {
     position: absolute;
-    height: 64px;
-    width: 141px;
+    height: 64px; /*74px*/
+    width: 141px; /*160px*/
     top: 50%;
-    margin-top: -32px;
+    margin-top: -32px; /*-37px*/
     left: 50%;
-    margin-left: -70.5px;
+    margin-left: -70.5px; /*80px*/
     background-color: rgb(0,132,255);
 }
 
 #moving {
     position: absolute;
-    top: 1px;
+    top: 1px; /*3px*/
     left: 0;
-    height: 62px;
+    height: 62px; /*68px*/
     width: 0px;
     background-color: rgb(19,17,18);
     -webkit-animation: loading 5s 1;
@@ -60,5 +61,4 @@ html {
     -webkit-animation-timing-function: ease;
     animation-timing-function: ease;
     -webkit-animation-fill-mode: forwards;
-    box-shadow: 1px 0 2px rgba(0,0,0,0.50);
 }
