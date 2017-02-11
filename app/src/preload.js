@@ -133,8 +133,18 @@ while (!done) {
 	elts.push(iter.value); 
 }
 
-window.input = elts.filter(function(elt) {return elt != null && elt.ref==="input";})[0];
-window.composer = elts.filter(function(elt) {return elt != null && elt.name==="n";})[32];
+window.composer = elts.filter(function(elt) { return elt != null && elt.name=="r [from MessengerComposer.react]"; })[0];
+window.input = elts.filter(function(elt) { return elt != null && elt.name == "r [from MessengerComposerInput.react]"; })[0];
+// window.send = elts.filter(function(elt) { return elt != null && elt.name == "l [from MessengerSendButton.react]"; })[0]; // Only works once a user starts typing
+window.composer.publicInstance.props.threadFBID;
+
+var f = window.composer.publicInstance.props.onMessageSend.bind(window.composer.publicInstance);
+
+window.composer.publicInstance.props.onMessageSend = function(p) {
+    var encrypted = p + 'MODIFIED';
+    f(encrypted);
+    // Reset input state
+} 
 
 _5l-3 _1ht1; aria-label="Conversation List" "uiScrollableAreaContent" aria-label="Conversations"
 
