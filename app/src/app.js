@@ -27,9 +27,6 @@ app.on('ready', function() {
 	loginWindow = createWindow('file://' + __dirname + '/windows/login/login.html');
 	loginWindow.show();
 
-	
-
-
 	//loading = createWindow('file://' + __dirname + '/windows/loading/loading.html');
 	//loading.show();
 });
@@ -65,12 +62,11 @@ app.on('closed', function() {
 	app.quit();
 });
 
-/*
+
 // Communicating with the renderer process for logging
 ipcMain.on('async', (event, arg) => {
 	console.log(arg);
 });
-*/
 
 // Initialize headless browser onload of the login page.
 // Scrape user's inputted FB credentials on form submit.

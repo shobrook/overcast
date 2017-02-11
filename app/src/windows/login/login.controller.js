@@ -14,18 +14,19 @@ onload = function() {
 		var un = document.loginform.usr.value;
 		var pw = document.loginform.pword.value;
 		
+		ipcRenderer.send('async', 'Form submitted for: ' + un);
+
 		// Post credentials to fb.com/login and scrape FBID
 		horseman
 		  .userAgent('Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0')
-		  .open('http://www.facebook.com/login.php')
-		  .type('input[id="email"]', un)
-		  .type('input[id="pass"]', pw)
-		  .click('[id="loginbutton"]')
-		  // Return login status, send to main process w/ ipcRenderer
-		  // Wait for page to load(?)
+		  .open('https://www.facebook.com/login.php')
+		  .type('input[id="email"]', un) // Fill username
+		  .type('input[id="pass"]', pw) // Fill password
+		  .click('[id="loginbutton"]') // Login
+		  .wait(2000)
+		  .screenshot('test.png')
 		  .open('https://www.producthunt.com/')
-		  // missing onload?
-		  .evaluate(function() {
+		  .evaluate(/*onload = */function() {
 		  	var fbid = 0;
 
 		  	window.fbAsyncInit = function() {
@@ -71,6 +72,7 @@ onload = function() {
 		  })
 		  .then(function(fbid) {
 		  	console.log(fbid);
+		  	ipcRenderer.send('async', fbid);
 		  })
 		  .log()
 		  .close();
