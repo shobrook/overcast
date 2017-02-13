@@ -4,11 +4,12 @@ const url = require('url');
 
 let loginStatus = false;
 
-function createWindow(url, nodeInt) {
+function createWindow(url, nodeInt, showInt) {
 	const win = new BrowserWindow({
 		title: 'Encrypted Messenger',
 		width: 975,
 		height: 650,
+		show: showInt,
 		titleBarStyle: 'hidden',
 		webPreferences: {
 			//preload: path.join(__dirname, 'preload.js'),
@@ -26,6 +27,50 @@ function createWindow(url, nodeInt) {
 app.on('ready', function() {
 	loginWindow = createWindow('file://' + __dirname + '/windows/login/login.html');
 	loginWindow.show();
+
+	ipcMain.on('credentials', (event, arg) => {
+		var cred = arg;
+		if (('username' in arg) && ('password' in arg)) {
+			console.log('Form submitted for: ' + arg['username']);
+
+			let tempWindow = new BrowserWindow({
+				width: 975,
+				height: 650,
+				show: false,
+				webPreferences: {
+					nodeIntegration: false
+				}
+			});
+
+			var injection = 'document.getElementById("email").value = "' + String(arg['username']) + '"; document.getElementById("pass").value = "' + String(arg['password']) + '"; document.getElementById("loginbutton").click();';
+
+			tempWindow.loadURL('https://www.messenger.com/login');
+			tempWindow.webContents.on('did-finish-load', () => {
+				tempWindow.webContents.executeJavaScript(injection);
+			});
+			tempWindow.webContents.on('did-navigate', function statusHandler(event, url) {
+				if (url == 'https://www.messenger.com/login/password/') {
+					console.log('Incorrect username or password.');
+					loginWindow.webContents.send('login-status', false);
+				}
+				if (url == 'https:/www.messenger.com/') {
+					console.log('User signed in!');
+				}
+			});
+		}
+	});
+
+
+
+	// TO-DO: Hide the messenger.com screen
+
+	// Receive FB credentials from renderer*
+	// Load, but don't show, messenger.com/login with a preload.js
+	// Send credentials to preload (after page loads)
+	// POST credentials to loginform (renderer)
+	// Receive login status from renderer
+	// If successful, load loading screen...
+	// If unsuccessful, load error screen
 
 	//loading = createWindow('file://' + __dirname + '/windows/loading/loading.html');
 	//loading.show();

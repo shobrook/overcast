@@ -31,6 +31,24 @@ var getPubKey = function(FBID) {
 }
 
 onload = function() {
+	// Runs once ReactDevTools is loaded
+	var elementData = window.__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent.elementData.values(); 
+	var elts = []; var done = false; 
+	while (!done) {   
+		var iter = elementData.next();   
+		done = iter.done;   
+		elts.push(iter.value); 
+	}
+
+	window.composer = elts.filter(function(elt) {
+		return elt != null && elt.name=="r [from MessengerComposer.react]";
+	})[0];
+	window.input = elts.filter(function(elt) {
+		return elt != null && elt.name == "r [from MessengerComposerInput.react]";
+	})[0];
+	window.friendFBID = window.composer.publicInstance.props.threadFBID;
+	window.yourFBID = window.composer.publicInstance.props.viewer;
+
 	var getMainMessages = function() {
 		var containerNode = document.getElementsByClassName('__i_')[0];
 		containerNode.childNodes.forEach(function(child) {
@@ -51,12 +69,14 @@ onload = function() {
 				});
 			}
 		});
+
 		/*
 		var containerNode = document.getElementsByClassName('_3oh-\ _58nk');
 		for (var i = 0; i < containerNode.length; i++) {
 			containerNode[i].innerHTML = decrypt(containerNode.innerHTML);
 		}
 		*/
+
 	}
 
 	var getThumbMessages = function() {
@@ -70,11 +90,13 @@ onload = function() {
 	getMainMessages();
 	getThumbMessages();
 
+	/*
 	var getFBID = function() {
 
 	}
 
 	window.friendFBID = getFBID();
+	*/
 
 	document.onkeyup = function newMessage(e) {
 		var key = e.which || e.keyCode;
@@ -90,8 +112,9 @@ onload = function() {
 		muts.forEach(function(mut) {
 			if (mut.attributeName == 'aria-relevant') {
 				var id = mut.target.firstChild.id.split(':')[1];
-				if (id != window.friendFBID) {
+				if (id != window.yourFBID) {
 					window.friendFBID = id;
+					console.log(window.friendFBID);
 				}
 			}
 		});
@@ -111,9 +134,12 @@ onload = function() {
 
 	var msgReceiveThumb = null;
 
+	var sessionTarg = document.getElementsByClassName('uiScrollableAreaContent').item(0);
+	var mainScrollTarg = document.getElementsByClassName('__i_')[0];
+	var attributes = {attributes: true, subtree: true};
 
-	newSession.observe(document.getElementsByClassName('uiScrollableAreaContent').item(0), {attributes: true, subtree: true});
-	mainScroll.observe(document.getElementsByClassName('__i_')[0], {attributes: true, subtree: true});
+	newSession.observe(sessionTarg, attributes);
+	mainScroll.observe(mainScrollTarg, attributes);
 	thumbScroll;
 	msgReceiveMain;
 	msgReceiveThumb;
@@ -122,6 +148,8 @@ onload = function() {
 // PROBLEMS
 	// Outbound encrypted messages need to show up as plaintext in the main window and conversation thumbnail
 	// When the main window is first loaded, not only do inbound messages need to be decrypted but so do outbound
+	// Load a referencable instance of axolotl into the JS injection
+	// Communicate w/ the IPC renderer in the JS injection
 
 // BRAINSTORMING
 
@@ -144,7 +172,7 @@ window.composer.publicInstance.props.onMessageSend = function(p) {
     var encrypted = p + 'MODIFIED';
     f(encrypted);
     // Reset input state
-} 
+}
 
 _5l-3 _1ht1; aria-label="Conversation List" "uiScrollableAreaContent" aria-label="Conversations"
 
