@@ -1,126 +1,85 @@
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path');
 const url = require('url');
 
-let loginStatus = false;
-
-function createWindow(url, nodeInt, showInt) {
+function createWindow(title, show, node) {
 	const win = new BrowserWindow({
-		title: 'Encrypted Messenger',
+		title: title,
 		width: 975,
 		height: 650,
-		show: showInt,
+		show: show,
 		titleBarStyle: 'hidden',
 		webPreferences: {
-			//preload: path.join(__dirname, 'preload.js'),
-			//webSecurity: false,
-			nodeIntegration: nodeInt,
-			plugsin: true
+			nodeIntegration: node
 		}
 	});
-
-	win.loadURL(url);
 
 	return win;
 }
 
 app.on('ready', function() {
-	loginWindow = createWindow('file://' + __dirname + '/windows/login/login.html');
-	loginWindow.show();
+	let login = createWindow('Login', true, true);
+	let loading = createWindow('Loading', false, true);
+	let messenger = createWindow('Encrypted Messenger', false, false);
 
+	login.loadURL('file://' + __dirname + '/windows/login/login.html');
+
+	// Listens for login status
 	ipcMain.on('credentials', (event, arg) => {
-		var cred = arg;
-		if (('username' in arg) && ('password' in arg)) {
-			console.log('Form submitted for: ' + arg['username']);
+		let temp = createWindow('Temp', false, false);
+		var injection = 'document.getElementById("email").value = "' + String(arg['username']) + '"; document.getElementById("pass").value = "' + String(arg['password']) + '"; document.getElementById("loginbutton").click();';
 
-			let tempWindow = new BrowserWindow({
-				width: 975,
-				height: 650,
-				show: false,
-				webPreferences: {
-					nodeIntegration: false
-				}
-			});
+		console.log('Form submitted for: ' + arg['username']);
 
-			var injection = 'document.getElementById("email").value = "' + String(arg['username']) + '"; document.getElementById("pass").value = "' + String(arg['password']) + '"; document.getElementById("loginbutton").click();';
+		temp.loadURL('https://www.messenger.com/login');
 
-			tempWindow.loadURL('https://www.messenger.com/login');
-			tempWindow.webContents.on('did-finish-load', () => {
-				tempWindow.webContents.executeJavaScript(injection);
-			});
-			tempWindow.webContents.on('did-navigate', function statusHandler(event, url) {
-				if (url == 'https://www.messenger.com/login/password/') {
-					console.log('Incorrect username or password.');
-					loginWindow.webContents.send('login-status', false);
-				}
-				if (url == 'https:/www.messenger.com/') {
-					console.log('User signed in!');
-				}
-			});
-		}
-	});
+		// Post FB credentials to login form
+		temp.webContents.on('did-finish-load', () => {
+			temp.webContents.executeJavaScript(injection);
+		});
 
+		// Detect (un)successful login
+		temp.webContents.on('did-navigate', function statusHandler(event, url) {
+			if (url == 'https://www.messenger.com/') {
+				console.log('Successful login.');
+				
+				loading.loadURL('file://' + __dirname + '/windows/loading/loading.html');
+				loading.show(); // TO-DO: Set loading time-frame dynamically
 
+				// DEMONSTRATION PURPOSES ONLY
+				setTimeout(function() {
+					messenger.loadURL('https://www.messenger.com/');
+					messenger.show();
 
-	// TO-DO: Hide the messenger.com screen
-
-	// Receive FB credentials from renderer*
-	// Load, but don't show, messenger.com/login with a preload.js
-	// Send credentials to preload (after page loads)
-	// POST credentials to loginform (renderer)
-	// Receive login status from renderer
-	// If successful, load loading screen...
-	// If unsuccessful, load error screen
-
-	//loading = createWindow('file://' + __dirname + '/windows/loading/loading.html');
-	//loading.show();
-});
-
-/*
-app.on('ready', function() {
-	signInWindow = createWindow('https://www.facebook.com/login', false);
-	signInWindow.show();
-
-	signInWindow.webContents.on('did-navigate-in-page', function(event, url) {
-		if (url == 'https://www.facebook.com/') {
-			splashWindow = createWindow('http://localhost:8000/windows/loading/main.html', true);
-			splashWindow.show();
-			ipcMain.on('async', (event, arg) => {
-				console.log(arg);
-				if (arg) {
-					mainWindow = createWindow('https://www.messenger.com/', false);
-					mainWindow.show();
-					mainWindow.webContents.openDevTools();
-					mainWindow.webContents.on('did-navigate-in-page', function(event, url) {
-						if (url == 'https://www.messenger.com/') {
-							console.log('test');
-						}
-					});
-				}
-			});
-		}
+					// Attempt at installing ReactDevTools
+					if (process.env.NODE_ENV === 'development') {
+						messenger.addDevToolsExtension('/Users/shobrook/Library/Application Support/Google/Chrome/' + 'default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/0.15.0_0');
+					}
+					messenger.openDevTools();
+				}, 5500);
+			} else if (url == 'https://www.messenger.com/login/password/') {
+				console.log('Incorrect username or password.');
+				
+				login.webContents.send('login-status', false);
+				setImmediate(function() {
+					temp.close();
+				});
+			}
+		});
 	});
 });
+
+/* TO-DO:
+ * 	1) Load messenger (in background) and add ReactDevTools
+ *  2) Inject framework.js, scrape FBID and send to main process
+ *  3) Send FBID receipt confirmation to loading renderer
+ *  4) Generate keybundle in loading renderer
+ *  5) Send keybundle to main process
+ *  6) Push FBID + keybundle to MongoDB (private keys to local dir?)
+ *  7) Send decryption confirmation to main process (from messenger renderer)
+ *  8) Load messenger in the foreground
 */
 
 app.on('closed', function() {
 	app.quit();
 });
-
-
-// Communicating with the renderer process for logging
-ipcMain.on('async', (event, arg) => {
-	console.log(arg);
-});
-
-// Initialize headless browser onload of the login page.
-// Scrape user's inputted FB credentials on form submit.
-// Post credentials to facebook.com in headless browser; on successful login, initialize FBID scraper,
-// else return 'Incorrect email or password.' error screen
-// Run Malik's JS in headless browser to scrape user's FBID, then send the FBID to the main process using ipcRenderer.
-// Upon receipt of FBID, initialize the loading screen.
-// Generate the user's keybundle in the renderer and pass all data to both local directories and the main process.
-// Push the FBID and public prekeys to MongoDB.
-// After server receipt confirmation, load the messenger.com/login wrapper (but do not show).
-// Preload the JS injection that posts FB credentials to login form and decrypts all messages on-screen.
-// Then show the messenger screen after confirmation from the JS injection.
