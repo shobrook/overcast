@@ -70,7 +70,7 @@ app.on('ready', function() {
 });
 
 /* TO-DO:
- * 	1) Load messenger (in background) and add ReactDevTools
+ *  1) Load messenger (in background) and add ReactDevTools
  *  2) Inject framework.js, scrape FBID and send to main process
  *  3) Send FBID receipt confirmation to loading renderer
  *  4) Generate keybundle in loading renderer
