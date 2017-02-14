@@ -1,5 +1,5 @@
 {
-  "name": "overcast",
+  "name": "encrypted-messenger",
   "description": "end to end encryption for facebook messenger",
   "main": "app.js",
   "authors": [
@@ -13,13 +13,12 @@
     "messenger",
     "secure-communication"
   ],
-  "homepage": "https://github.com/shobrook/overcast",
+  "homepage": "https://github.com/shobrook/encrypted-messenger",
   "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "testing",
   ]
 }
