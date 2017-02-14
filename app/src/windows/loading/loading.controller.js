@@ -10,7 +10,7 @@ onload = function() {
 	// Listens for confirmation of FBID receipt
 	ipcRenderer.on('fbid-status', (event, arg) => {
 		if (arg == true) {
-			// Generate keybundle
+			// TO-DO: Generate keybundle, send to main process and local dir(?)
 		}
 	});
 }

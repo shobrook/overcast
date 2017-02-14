@@ -1,54 +1,93 @@
-// DOM LISTENERS
-	// onload: decrypts any crypto on-screen when messenger first loads
-	// newMessage: intercepts plaintext on message send, encrypts and replaces w/ crypto
-	// mainScroll: decrypts newfound messages in main window when a user scrolls up
-	// thumbScroll: decrypts message thumbnails when user scrolls down recent convos window
-	// newSession: observes when user changes conversations, decrypts messages in main window
-	// msgReceiveMain: listens for new message in main window and decrypts
-	// msgReceiveThumb: listens for new message in recent convos window and decrypts
-
-// METHODS
-	// getFBID(): returns friend's FBID for current session
-	// getPubKey(window.FBID): queries MongoDB and returns keybundle associated w/ a given FBID
-	// encrypt(plaintext, window.FBID): encrypts plaintext given a recipient's FBID
-	// decrypt(crypto): decrypts a string of crypto
-	// getMainMessages(): scrapes, decrypts, and replaces encrypted messages in main window
-	// getThumbMessages(): scrapes, decrypts, and replaces encrypted messages in recent convos window
-
 // GLOBALS
-	// window.friendFBID: friend's FBID for current session
 
-var encrypt = function(plaintext, FBID) {
+var {ipcRenderer, remote} = require('electron');
+var app = remote.require('./app.js');
+var axolotl = require('axolotl');
+var mongodb = require('mongodb');
 
-}
+var MongoClient = mongodb.MongoClient;
+var url = 'mongodb://localhost:27017/keyserver'; // Temp
 
-var decrypt = function(crypto) {
-
-}
-
+// Queries keyserver with FBID and returns keybundle
 var getPubKey = function(FBID) {
+	// Establish connection to keyserver
+	MongoClient.connect(url, function(err, db) {
+		if (err) {
+			ipcRenderer.send('mongodb', 'Unable to connect to MongoDB server. Error: ' + err); // Debugging
+		} else {
+			ipcRenderer.send('mongodb', 'Database connection established to: ' + url); // Debugging
 
+			var collection = db.collection('keys');
+			collection.find({fbid: FBID});
+
+			// TO-DO: Pull keybundle from queried document, return in parsable format
+
+			db.close();
+		}
+	});
 }
+
+/* MongoDB Crash Course (running local environment):
+ * Open two terminal windows, initialize MongoDB 
+ * localhost with the 'mongod' command in first
+ * window. Now, once you run the MongoClient code,
+ * the 'keyserver' database and 'keys' collection
+ * will be dynamically created. Connect to MongoDB
+ * shell in second window with the 'mongo' command.
+ * To view local databases, type 'show dbs'. To
+ * enter keyserver database, type 'use keyserver'.
+ * To view collections, type 'show collections'
+ * (you're probably getting the idea now). To switch
+ * into a keys collection, type 'use keys'. To view
+ * documents in collection, type 'db.keys.find()'.
+ * Reference the 'mongod' daemon for debugging stuff.
+*/
+
+// Encrypts plaintext using Axolotl
+var encrypt = function(plaintext, FBID) {
+	var pubKey = getPubKey(FBID);
+
+	// TO-DO: Return encrypted plaintext with pubKey
+}
+
+// Decrypts either received or sent crypto
+var decrypt = function(crypto, state) {
+	if (state == true) {
+		// TO-DO: Decrypt inbound message
+	} else {
+		// TO-DO: Decrypt outbound message
+	}
+}
+
+// MAIN
 
 onload = function() {
-	// Runs once ReactDevTools is loaded
+	// TO-DO: Detect when ReactDevTools is loaded
+
+	// Scrapes React components and virtual DOM
 	var elementData = window.__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent.elementData.values(); 
-	var elts = []; var done = false; 
+	var elts = []; var done = false;
 	while (!done) {   
 		var iter = elementData.next();   
 		done = iter.done;   
 		elts.push(iter.value); 
 	}
 
+	// Targets composer and input components
 	window.composer = elts.filter(function(elt) {
 		return elt != null && elt.name=="r [from MessengerComposer.react]";
 	})[0];
 	window.input = elts.filter(function(elt) {
 		return elt != null && elt.name == "r [from MessengerComposerInput.react]";
 	})[0];
+
+	// Pulls FBIDs for current session
 	window.friendFBID = window.composer.publicInstance.props.threadFBID;
 	window.yourFBID = window.composer.publicInstance.props.viewer;
 
+	ipcRenderer.send('fbid', {yourFBID: yourFBID, friendFBID: friendFBID}); // Sends FBIDs to main process
+
+	// Scrapes, decrypts, and replaces encrypted messages in main conversation
 	var getMainMessages = function() {
 		var containerNode = document.getElementsByClassName('__i_')[0];
 		containerNode.childNodes.forEach(function(child) {
@@ -58,68 +97,68 @@ onload = function() {
 						var msgWrapperNodes = c.childNodes[0].getElementsByClassName('clearfix');
 						for (var i = 0; i < msgWrapperNodes.length; i++) {
 							var msgNode = msgWrapperNodes[i].childNodes[0].childNodes[0];
+							
+							// Detects if message is rich media content
 							if (msgNode == undefined || msgNode == null) {
 								continue;
 							}
+
+							// Detects if message is encrypted
 							if (msgNode.innerHTML.indexOf('-----BEGIN PGP MESSAGE-----') == 0) {
-								msgNode.innerHTML = decrypt(msgNode.innerHTML);
+								// TO-DO: Detect if message is from friend or user
+
+								if (fromFriend == true) {
+									msgNode.innerHTML = decrypt(msgNode.innerHTML, true);
+								} else {
+									msgNode.innerHTML = decrypt(msgNode.innerHTML, false);
+								}
 							}
 						}
 					}
 				});
 			}
 		});
-
 		/*
 		var containerNode = document.getElementsByClassName('_3oh-\ _58nk');
 		for (var i = 0; i < containerNode.length; i++) {
 			containerNode[i].innerHTML = decrypt(containerNode.innerHTML);
 		}
 		*/
-
 	}
 
+	// Scrapes, decrypts, and replaces encrypted message thumbnails in recent conversations
 	var getThumbMessages = function() {
 		var sideMaster = document.getElementsByClassName('_1htf');
 		for (i = 0; i < sideMaster.length; i++) {
-			// TO-DO: Check if text is encrypted, keep the 'You: '
-			sideMaster[i].innerHTML = decrypt(sideMaster[i].innerHTML);
+			// Detects if message is from user or friend
+			if (sideMaster[i].innerHTML.indexOf('You: ') == 0) {
+				if (sideMaster[i].innerHTML.indexOf('-----BEGIN PGP MESSAGE-----') == 5) {
+					sideMaster[i].innerHTML = 'You: ' + decrypt(sideMaster[i].innerHTML.slice(5), false);
+				}
+			} else if (sideMaster[i].innerHTML.indexOf('-----BEGIN PGP MESSAGE-----') == 0) {
+				sideMaster[i].innerHTML = decrypt(sideMaster[i].innerHTML, true);
+			}
 		}
 	}
 
 	getMainMessages();
 	getThumbMessages();
 
-	/*
-	var getFBID = function() {
-
-	}
-
-	window.friendFBID = getFBID();
-	*/
-
-	document.onkeyup = function newMessage(e) {
-		var key = e.which || e.keyCode;
-		if (key == 13) {
-			console.log('Enter pressed.');
-		} else {
-			var text = document.activeElement.textContent;
-			console.log(text);
-		}
-	}
-
+	// Listens for session change (new convo) and decrypts new messages
 	var newSession = new MutationObserver(function(muts) {
 		muts.forEach(function(mut) {
 			if (mut.attributeName == 'aria-relevant') {
 				var id = mut.target.firstChild.id.split(':')[1];
 				if (id != window.yourFBID) {
-					window.friendFBID = id;
-					console.log(window.friendFBID);
+					window.friendFBID = window.composer.publicInstance.props.threadFBID; // Updates global FBID
+					getMainMessages();
+					getThumbMessages();
 				}
 			}
 		});
 	});
 
+	// Decrypts newfound messages in main conversation when user scrolls up
 	var mainScroll = new MutationObserver(function(muts) {
 		muts.forEach(function(mut) {
 			if (mut.attributeName == 'id' || mut.attributeName == 'class') {
@@ -128,14 +167,19 @@ onload = function() {
 		});
 	});
 
-	var thumbScroll = null;
+	// Decrypts newfound message thumbnails in recent conversations when user scrolls down
+	var thumbScroll;
 
-	var msgReceiveMain = null;
+	// Listens for and decrypts new message in main conversation
+	var msgReceiveMain;
 
-	var msgReceiveThumb = null;
+	// Listens for and decrypts new message in recent conversations
+	var msgReceiveThumb;
 
+	// Mutation Observer globals
 	var sessionTarg = document.getElementsByClassName('uiScrollableAreaContent').item(0);
 	var mainScrollTarg = document.getElementsByClassName('__i_')[0];
+	var thumbScrollTarg;
 	var attributes = {attributes: true, subtree: true};
 
 	newSession.observe(sessionTarg, attributes);
@@ -143,29 +187,24 @@ onload = function() {
 	thumbScroll;
 	msgReceiveMain;
 	msgReceiveThumb;
-}
 
-// PROBLEMS
-	// Outbound encrypted messages need to show up as plaintext in the main window and conversation thumbnail
-	// When the main window is first loaded, not only do inbound messages need to be decrypted but so do outbound
-	// Load a referencable instance of axolotl into the JS injection
-	// Communicate w/ the IPC renderer in the JS injection
+	ipcRenderer.send('preprocessed', true); // Sends injection status to main process
+}
 
 // BRAINSTORMING
 
-var elementData = window.__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent.elementData.values(); 
-var elts = []; var done = false; 
-while (!done) {   
-	var iter = elementData.next();   
-	done = iter.done;   
-	elts.push(iter.value); 
+// Detects when a user starts typing
+document.onkeyup = function newMessage(e) {
+	var key = e.which || e.keyCode;
+	if (key == 13) {
+		console.log('Enter pressed.');
+	} else {
+		var text = document.activeElement.textContent;
+		console.log(text);
+	}
 }
 
-window.composer = elts.filter(function(elt) { return elt != null && elt.name=="r [from MessengerComposer.react]"; })[0];
-window.input = elts.filter(function(elt) { return elt != null && elt.name == "r [from MessengerComposerInput.react]"; })[0];
-// window.send = elts.filter(function(elt) { return elt != null && elt.name == "l [from MessengerSendButton.react]"; })[0]; // Only works once a user starts typing
-window.composer.publicInstance.props.threadFBID;
-
+// Intercepts outbound messages for encryption
 var f = window.composer.publicInstance.props.onMessageSend.bind(window.composer.publicInstance);
 
 window.composer.publicInstance.props.onMessageSend = function(p) {
@@ -174,8 +213,13 @@ window.composer.publicInstance.props.onMessageSend = function(p) {
     // Reset input state
 }
 
-_5l-3 _1ht1; aria-label="Conversation List" "uiScrollableAreaContent" aria-label="Conversations"
+// _5l-3 _1ht1; aria-label="Conversation List" "uiScrollableAreaContent" aria-label="Conversations"
 
-$( document ).on( "DOMNodeInserted", function( e ) {
-	if ($(e.target).hasClass("")) { console.log($(e.target).children()); };  // the new element	
+// I forgot what this does
+$(document).on("DOMNodeInserted", function(e) {
+	if ($(e.target).hasClass("")) { 
+		console.log($(e.target).children()); 
+	};
 });
+
+// Outbound encrypted messages need to be signed so that they can be decrypted
